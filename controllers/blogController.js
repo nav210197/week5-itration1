@@ -19,6 +19,7 @@ const createBlog = async (req, res) => {
   }
 };
 
+  
 // GET all blogs
 const getBlogs = async (req, res) => {
   try {
@@ -42,9 +43,45 @@ const getBlog = async (req, res) => {
   }
 };
 
+// DELETE a blog by ID
+const deleteBlog = async (req, res) => {
+    try {
+      const blog = await Blog.findByIdAndDelete(req.params.id);
+      if (!blog) {
+        return res.status(404).json({ error: "Blog not found" });
+      }
+      res.json({ message: "Blog deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+
+// Replace (Put) a single blog by ID
+const putBlog = async (req, res) => {
+    try {
+      const blog = await Blog.findOneAndReplace(
+        { _id: req.params.id },
+        req.body,
+        { new: true }
+      );
+  
+      if (!blog) {
+        return res.status(404).json({ error: "Blog not found" });
+      }
+  
+      res.json(blog);
+    } catch (err) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+  
+
 
 module.exports = {
   createBlog,
   getBlogs,
   getBlog,
+  deleteBlog,
+  putBlog,
+
 };
